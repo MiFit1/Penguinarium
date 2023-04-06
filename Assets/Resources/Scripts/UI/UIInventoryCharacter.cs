@@ -2,17 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class UIInventoryCharacter : MonoBehaviour
 {
-
-    private Rigidbody2D rb;
     private Animator anim;
-    private float horizontal;
-    private float vertical;
-
-    [SerializeField] private float maxSpeed;
-    float movingSpeed;
-
     private GameObject hand;
 
     private Vector3 mousePosition;
@@ -22,25 +14,17 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         anim = this.GetComponent<Animator>();
-        rb = this.GetComponent<Rigidbody2D>();
         hand = this.transform.GetChild(0).GetChild(0).gameObject;
     }
 
     void Update()
     {
+        float horizontal;
+        float vertical;
         horizontal = Input.GetAxisRaw("Horizontal");
         vertical = Input.GetAxisRaw("Vertical");
-
-        if (horizontal != 0 && vertical != 0)
-        {
-            movingSpeed = 0.7f * maxSpeed;
-        }
-        else
-        {
-            movingSpeed = maxSpeed;
-        }
-
-        if (rb.velocity.x != 0 || rb.velocity.y != 0)
+        Vector2 vec = new Vector2 (horizontal, vertical);
+        if (vec != Vector2.zero)
         {
             anim.SetBool("IsRunning", true);
         }
@@ -52,7 +36,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * movingSpeed, vertical * movingSpeed);
 
         {
             diffHand = Camera.main.ScreenToWorldPoint(Input.mousePosition) - hand.transform.position;
@@ -91,5 +74,6 @@ public class PlayerController : MonoBehaviour
             }
 
         } //вращение рукой
+
     }
 }
