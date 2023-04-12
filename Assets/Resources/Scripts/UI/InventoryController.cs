@@ -6,8 +6,8 @@ using UnityEngine;
 public class InventoryController : MonoBehaviour
 {
     [SerializeField] private UIInventoryPage inventoryUI;
-    [SerializeField]
-    private InventorySO inventoryData;
+    [SerializeField] private InventorySO inventoryData;
+    [SerializeField] private InventoryHotBar invenoryHotBar;
 
     public List<InventoryItem> initialItems = new List<InventoryItem>();
 
@@ -36,6 +36,7 @@ public class InventoryController : MonoBehaviour
         {
             inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
         }
+        invenoryHotBar.UpdateHotBar();
     }
 
     private void PrepareUI()
