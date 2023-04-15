@@ -7,14 +7,19 @@ public class InventoryController : MonoBehaviour
 {
     [SerializeField] private UIInventoryPage inventoryUI;
     [SerializeField] private InventorySO inventoryData;
+    [SerializeField] private int HotBarSize = 7;
     [SerializeField] private InventoryHotBar invenoryHotBar;
+    
+    
 
     public List<InventoryItem> initialItems = new List<InventoryItem>();
 
     private void Start()
     {
         PrepareUI();
+        invenoryHotBar.InitializeHotBarUI(HotBarSize);
         PrepareInventory();
+        invenoryHotBar.UpdateHotBar(HotBarSize);
     }
 
     private void PrepareInventory()
@@ -36,7 +41,7 @@ public class InventoryController : MonoBehaviour
         {
             inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
         }
-        invenoryHotBar.UpdateHotBar();
+        invenoryHotBar.UpdateHotBar(HotBarSize);
     }
 
     private void PrepareUI()

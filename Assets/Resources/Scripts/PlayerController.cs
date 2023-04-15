@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,62 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
     private float horizontal;
     private float vertical;
+
+    public static Action<int> ClickOnNumber;
+    public static Action OnScrolledRight, OnScrolledLeft;
+
+    private PlayerInput input;
+
+    private void Awake()
+    {
+        input = new PlayerInput();
+        input.Player.ClickOnOne.performed += context => OnClickedOne();
+        input.Player.ClickOnTwo.performed += context => OnClickedTwo();
+        input.Player.ClickOnThree.performed += context => OnClickedThree();
+        input.Player.ClickOnFour.performed += context => OnClickedFour();
+        input.Player.ClickOnFive.performed += context => OnClickedFive();
+        input.Player.ClickOnSix.performed += context => OnClickedSix();
+        input.Player.ClickOnSeven.performed += context => OnClickedSeven();
+    }
+
+    private void OnClickedSeven()
+    {
+        ClickOnNumber?.Invoke(7);
+    }
+    private void OnClickedSix()
+    {
+        ClickOnNumber?.Invoke(6);
+    }
+    private void OnClickedFive()
+    {
+        ClickOnNumber?.Invoke(5);
+    }
+    private void OnClickedFour()
+    {
+        ClickOnNumber?.Invoke(4);
+    }
+    private void OnClickedThree()
+    {
+        ClickOnNumber?.Invoke(3);
+    }
+    private void OnClickedTwo()
+    {
+        ClickOnNumber?.Invoke(2);
+       // Debug.Log("Clicked 2");
+    }
+    private void OnClickedOne()
+    {
+       // Debug.Log("Clicked 1");
+        ClickOnNumber?.Invoke(1);
+    }
+    private void OnEnable()
+    {
+        input.Enable();
+    }
+    private void OnDisable()
+    {
+        input.Disable();
+    }
 
     [SerializeField] private float maxSpeed;
     float movingSpeed;
@@ -48,7 +105,19 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetBool("IsRunning", false);
         }
+
+        //Прокрутка хотбара
+        float z = input.Player.Scroll.ReadValue<float>();
+        if (z > 0)
+        {
+            OnScrolledRight?.Invoke();
+        }
+        else if(z < 0)
+        {
+            OnScrolledLeft?.Invoke();
+        }
     }
+
 
     private void FixedUpdate()
     {

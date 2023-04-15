@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using static UnityEditor.Progress;
@@ -8,14 +10,60 @@ public class InventoryHotBar : MonoBehaviour
 {
     [SerializeField] private UIInventoryItem itemPrefab;
     [SerializeField] private RectTransform SlotsRect;
-    [SerializeField] private int HotBarSize = 8;
     [SerializeField] private InventorySO inventoryData;
 
+    private int SelectedSlot = 0;
+
     List<UIInventoryItem> listHotBarItems = new List<UIInventoryItem>();
+
     private void Start()
     {
-        InitializeHotBarUI(HotBarSize);
-        UpdateHotBar();
+        PlayerController.ClickOnNumber += OnNumberClicked;
+        PlayerController.OnScrolledRight += OnScrolledRight;
+        PlayerController.OnScrolledLeft += OnScrolledLeft;
+        listHotBarItems[0].Select();
+    }
+
+    private void OnScrolledLeft()
+    {
+        if(SelectedSlot > 0)
+        {
+            DeselectAllItems();
+            SelectedSlot --;
+            listHotBarItems[SelectedSlot].Select();
+        }
+        else
+        {
+            DeselectAllItems();
+            SelectedSlot = (listHotBarItems.Count - 1);
+            listHotBarItems[SelectedSlot].Select();
+        }
+    }
+
+    private void OnScrolledRight()
+    {
+        DeselectAllItems();
+        SelectedSlot = (SelectedSlot + 1) % listHotBarItems.Count;
+        listHotBarItems[SelectedSlot].Select();
+    }
+
+    private void OnNumberClicked(int itemIndex)
+    {
+        itemIndex--;
+        if(itemIndex > listHotBarItems.Count)
+        {
+            return;
+        }
+        DeselectAllItems();
+        SelectedSlot = itemIndex;
+        listHotBarItems[itemIndex].Select();
+    }
+     private void DeselectAllItems()
+    {
+        foreach (UIInventoryItem item in listHotBarItems)
+        {
+            item.Deselect();
+        }
     }
     public void InitializeHotBarUI(int hotBarSize)
     {
@@ -26,18 +74,21 @@ public class InventoryHotBar : MonoBehaviour
             uiItem.transform.localScale = Vector3.one;
             listHotBarItems.Add(uiItem);
         }
+        Debug.Log($"list = {listHotBarItems.Count}");
     }
-    public void UpdateHotBar()
+    public void UpdateHotBar(int hotBarSize)
     {
-        for(int i = 0; i < HotBarSize; i++)
+        for(int i = 0; i < hotBarSize; i++)
         {
             InventoryItem invetoryItem = inventoryData.GetItemAt(i);
             if (!invetoryItem.IsEmpty)
             {
                 listHotBarItems[i].SetData(invetoryItem.item.ItemImage, invetoryItem.quantity);
+               // Debug.Log($"list = {listHotBarItems.Count}");
             }
         }
     }
+   
 
 
 }
