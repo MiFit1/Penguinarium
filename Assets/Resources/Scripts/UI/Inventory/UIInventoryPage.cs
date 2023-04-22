@@ -8,12 +8,22 @@ public class UIInventoryPage : MonoBehaviour
     [SerializeField] private UIInventoryItem itemPrefab;
     [SerializeField] private RectTransform slots;
     [SerializeField] private MouseFollower mouseFollower;
+    [SerializeField] private InventorySO inventoryData;
+    [SerializeField] private InventoryHotBar hotBar;
     List<UIInventoryItem> listUIItems = new List<UIInventoryItem>();
 
+
     private int currentlyDraggedItemIndex = -1;
+    private int selectedSlotInventory = -1;
+
 
     public event Action<int> OnItemActionRequested, OnStartDragging, OnDescriptionRequested;
     public event Action<int, int> OnSwapItems;
+
+    public int GetSelectedSlotInventory()
+    {
+        return selectedSlotInventory;
+    }
     public void InitializeInventoryUI(int inventorysize)
     {
         for (int i = 0; i < inventorysize; i++)
@@ -30,11 +40,28 @@ public class UIInventoryPage : MonoBehaviour
         }
     }
 
+    public void DropedSelectedItem(int amount, int itemIndex)
+    {
+        if (amount == -1)
+        {
+            inventoryData.RemoveAllItems(itemIndex);
+             selectedSlotInventory = -1;
+        }
+        else
+        {
+            inventoryData.RemoveItem(itemIndex,amount);
+            if (inventoryData.GetItemAt(itemIndex).IsEmpty)
+                selectedSlotInventory = -1;
+            else if (selectedSlotInventory != -1)
+                listUIItems[itemIndex].Select();
+        }
+    }
     private void Awake()
     {
-        Hide();
         mouseFollower.Toggle(false);
+        //Hide();
     }
+
     
     public void UpdateData(int itemIndex, Sprite itemImage, int itemQuantity)
     {
@@ -90,6 +117,7 @@ public class UIInventoryPage : MonoBehaviour
     private void HandleItemSelection(UIInventoryItem inventoryItemUI)
     {
         int index = listUIItems.IndexOf(inventoryItemUI);
+        selectedSlotInventory = index;
         if (index == -1)
             return;
         OnDescriptionRequested?.Invoke(index); 
@@ -117,6 +145,7 @@ public class UIInventoryPage : MonoBehaviour
 
     public void Hide()
     {
+        selectedSlotInventory = -1;
         gameObject.SetActive(false);
         ResetDraggedItem();
     }

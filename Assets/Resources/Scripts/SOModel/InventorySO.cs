@@ -99,6 +99,31 @@ public class InventorySO : ScriptableObject
         return quantity;
     }
 
+    public void RemoveAllItems(int itemIndex)
+    {
+        if (inventoryItems.Count > itemIndex)
+        {
+            if (inventoryItems[itemIndex].IsEmpty)
+                return;
+            inventoryItems[itemIndex] = InventoryItem.GetEmptyItem();
+            InformAboutChange();
+        }
+    }
+    public void RemoveItem(int itemIndex, int amount)
+    {
+        if (inventoryItems.Count > itemIndex)
+        {
+            if (inventoryItems[itemIndex].IsEmpty)
+                return;
+            int reminder = inventoryItems[itemIndex].quantity - amount;
+            if (reminder <= 0)
+                inventoryItems[itemIndex] = InventoryItem.GetEmptyItem();
+            else
+                inventoryItems[itemIndex] = inventoryItems[itemIndex].ChangeQuantity(reminder);
+            InformAboutChange();
+        }
+    }
+
     public Dictionary<int, InventoryItem> GetCurrentInventoryState()
     {
         Dictionary<int, InventoryItem> returnValue = new Dictionary<int, InventoryItem> ();

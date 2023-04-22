@@ -18,4 +18,6 @@ public class ItemSO : ScriptableObject
     public string Description { get; set; }
 
     [field: SerializeField] public Sprite ItemImage { get; set; }
+
+    [field: SerializeField] public AudioClip AudioClip { get; set; }
 }

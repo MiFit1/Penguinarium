@@ -98,6 +98,24 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Q + Shift"",
+                    ""type"": ""Button"",
+                    ""id"": ""0d70c9d2-996f-454a-8560-634f30d6f23b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Q"",
+                    ""type"": ""Button"",
+                    ""id"": ""4cde5c76-de57-4612-8d29-27db199998c2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -188,6 +206,50 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""ClickOnSeven"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""One Modifier"",
+                    ""id"": ""84e8032c-ad61-4c09-b4d8-3149656ee6fb"",
+                    ""path"": ""OneModifier"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Q + Shift"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""modifier"",
+                    ""id"": ""c262b4c5-02d1-4f42-bf40-0b22186f06f5"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Q + Shift"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""binding"",
+                    ""id"": ""52f7a36b-e4a8-411a-88c4-7a549f4400f4"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Q + Shift"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8096da7-82ca-4acf-a048-c4e50ee9e651"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Q"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -204,6 +266,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_ClickOnFive = m_Player.FindAction("ClickOnFive", throwIfNotFound: true);
         m_Player_ClickOnSix = m_Player.FindAction("ClickOnSix", throwIfNotFound: true);
         m_Player_ClickOnSeven = m_Player.FindAction("ClickOnSeven", throwIfNotFound: true);
+        m_Player_QShift = m_Player.FindAction("Q + Shift", throwIfNotFound: true);
+        m_Player_Q = m_Player.FindAction("Q", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -271,6 +335,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ClickOnFive;
     private readonly InputAction m_Player_ClickOnSix;
     private readonly InputAction m_Player_ClickOnSeven;
+    private readonly InputAction m_Player_QShift;
+    private readonly InputAction m_Player_Q;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -283,6 +349,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @ClickOnFive => m_Wrapper.m_Player_ClickOnFive;
         public InputAction @ClickOnSix => m_Wrapper.m_Player_ClickOnSix;
         public InputAction @ClickOnSeven => m_Wrapper.m_Player_ClickOnSeven;
+        public InputAction @QShift => m_Wrapper.m_Player_QShift;
+        public InputAction @Q => m_Wrapper.m_Player_Q;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -316,6 +384,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @ClickOnSeven.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnClickOnSeven;
                 @ClickOnSeven.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnClickOnSeven;
                 @ClickOnSeven.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnClickOnSeven;
+                @QShift.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQShift;
+                @QShift.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQShift;
+                @QShift.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQShift;
+                @Q.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQ;
+                @Q.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQ;
+                @Q.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQ;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -344,6 +418,12 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @ClickOnSeven.started += instance.OnClickOnSeven;
                 @ClickOnSeven.performed += instance.OnClickOnSeven;
                 @ClickOnSeven.canceled += instance.OnClickOnSeven;
+                @QShift.started += instance.OnQShift;
+                @QShift.performed += instance.OnQShift;
+                @QShift.canceled += instance.OnQShift;
+                @Q.started += instance.OnQ;
+                @Q.performed += instance.OnQ;
+                @Q.canceled += instance.OnQ;
             }
         }
     }
@@ -358,5 +438,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnClickOnFive(InputAction.CallbackContext context);
         void OnClickOnSix(InputAction.CallbackContext context);
         void OnClickOnSeven(InputAction.CallbackContext context);
+        void OnQShift(InputAction.CallbackContext context);
+        void OnQ(InputAction.CallbackContext context);
     }
 }

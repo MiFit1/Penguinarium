@@ -23,7 +23,10 @@ public class InventoryHotBar : MonoBehaviour
         PlayerController.OnScrolledLeft += OnScrolledLeft;
         listHotBarItems[0].Select();
     }
-
+    public int GetHotBarSelectedSlot()
+    {
+        return SelectedSlot;
+    }
     private void OnScrolledLeft()
     {
         if(SelectedSlot > 0)
@@ -74,7 +77,7 @@ public class InventoryHotBar : MonoBehaviour
             uiItem.transform.localScale = Vector3.one;
             listHotBarItems.Add(uiItem);
         }
-        Debug.Log($"list = {listHotBarItems.Count}");
+        Debug.Log($"HotBarlist = {listHotBarItems.Count}");
     }
     public void UpdateHotBar(int hotBarSize)
     {
@@ -85,6 +88,10 @@ public class InventoryHotBar : MonoBehaviour
             {
                 listHotBarItems[i].SetData(invetoryItem.item.ItemImage, invetoryItem.quantity);
                // Debug.Log($"list = {listHotBarItems.Count}");
+            }
+            else
+            {
+                listHotBarItems[i].ResetData();
             }
         }
     }

@@ -9,11 +9,11 @@ public class MouseFollower : MonoBehaviour
 
     public void Awake()
     {
-        canvas = transform.root.GetComponent<Canvas>(); //берёт компонент Canvas
-        item = GetComponentInChildren<UIInventoryItem>(); // находит первый объект с таким компоненто в иерархии
+        canvas = transform.root.GetComponent<Canvas>(); 
+        item = GetComponentInChildren<UIInventoryItem>(); // находит первый объект с таким компонентом в иерархии
     }
 
-    public void SetData(Sprite sprite, int quantity) // устанавливает данные для объкта, следующего за курсором
+    public void SetData(Sprite sprite, int quantity) 
     {
         item.SetData(sprite, quantity);
     }
@@ -28,7 +28,7 @@ public class MouseFollower : MonoBehaviour
 
     public void Toggle(bool val)
     {
-        Debug.Log($"Item toggled {val}");
+        //Debug.Log($"Item toggled {val}");
         gameObject.SetActive(val);
     }
 }

@@ -5,17 +5,15 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     [field: SerializeField]
-    public ItemSO InventoryItem { get; private set; }
+    public ItemSO InventoryItem { get; set; }
 
     [field: SerializeField]
     public int Quantity { get;  set; } = 1;
 
-    [SerializeField]
 
-    private AudioSource audioSource;
-
-    [SerializeField]
-    private float duration = 0.3f;
+    [SerializeField] private float duration = 0.3f;
+    [SerializeField] private float journeyTime = 0.2f;
+    [SerializeField] private float range = 1.02f;
 
     private void Start()
     {
@@ -27,12 +25,36 @@ public class Item : MonoBehaviour
     {
         GetComponent<Collider2D>().enabled = false;
         StartCoroutine(AnimateItemPickup());
+    }
 
+    public void DumpItem(Vector3 position, Vector3 mousePosition )
+    {
+        GetComponent<Collider2D>().enabled = false;
+        transform.position = position;
+        StartCoroutine(AnimateItemDump(position, mousePosition));
+    }
+    private IEnumerator AnimateItemDump(Vector3 position, Vector3 mousePosition)
+    {
+        mousePosition.z = 0;
+        Vector3 direction = mousePosition - position;
+        Debug.Log($"position = {mousePosition}");
+        direction = direction.normalized;
+        Debug.Log($"directrion = {direction}");
+        direction *= range;
+        Vector3 hitcurrent = position + direction;
+        float startTime = Time.time;
+        float fracComplete = (Time.time - startTime) / journeyTime;
+        while(fracComplete <= 1)
+        {
+            fracComplete = (Time.time - startTime) / journeyTime;
+            transform.position = Vector3.Lerp(position, hitcurrent, fracComplete);
+            yield return null;
+        }
+        GetComponent<Collider2D>().enabled = true;
     }
     
     private IEnumerator AnimateItemPickup()
     {
-        audioSource.Play();
         Vector3 startScale = transform.localScale;
         Vector3 endScale = Vector3.zero;
         float currentTime = 0;
@@ -40,10 +62,6 @@ public class Item : MonoBehaviour
         {
             currentTime += Time.deltaTime;
             transform.localScale = Vector3.Lerp(startScale, endScale, currentTime / duration);
-            yield return null;
-        }
-        while (audioSource.isPlaying)
-        {
             yield return null;
         }
         Destroy(gameObject);

@@ -9,7 +9,8 @@ public class InventoryController : MonoBehaviour
     [SerializeField] private InventorySO inventoryData;
     [SerializeField] private int HotBarSize = 7;
     [SerializeField] private InventoryHotBar invenoryHotBar;
-    
+    [SerializeField] private Item defaultItemPrefab;
+    [SerializeField] private PlayerController player;
     
 
     public List<InventoryItem> initialItems = new List<InventoryItem>();
@@ -20,18 +21,54 @@ public class InventoryController : MonoBehaviour
         invenoryHotBar.InitializeHotBarUI(HotBarSize);
         PrepareInventory();
         invenoryHotBar.UpdateHotBar(HotBarSize);
+        //inventoryUI.Show();
     }
 
     private void PrepareInventory()
     {
         inventoryData.Initialize();
         inventoryData.OnInventoryUpdated += UpdateInventoryUI;
+        PlayerController.OnDropedItem += DropItem;
         foreach (InventoryItem item in initialItems)
         {
             if (item.IsEmpty)
                 continue;
             inventoryData.AddItem(item);
         }
+    }
+
+    private int IndexDropedItem()
+    {
+        int selectedSlotHotBar = invenoryHotBar.GetHotBarSelectedSlot();
+        int selectedSlotInventory = inventoryUI.GetSelectedSlotInventory();
+        if (!inventoryUI.isActiveAndEnabled)
+            return selectedSlotHotBar;
+        else if (selectedSlotInventory == -1)
+            return selectedSlotHotBar;
+        else
+            return selectedSlotInventory;
+    }
+    private void DropItem(int amount)
+    {
+        int dropItemIndex = IndexDropedItem();
+        if (inventoryData.GetItemAt(dropItemIndex).IsEmpty)
+            return;
+        Item dropItem = Instantiate(defaultItemPrefab, Vector3.one,Quaternion.identity);
+        dropItem.InventoryItem = inventoryData.GetItemAt(dropItemIndex).item;
+        if (amount == -1)
+        {
+            dropItem.Quantity = inventoryData.GetItemAt(dropItemIndex).quantity;
+        }
+        else
+        {
+            dropItem.Quantity = amount;
+        }
+        Vector3 PlayerPosition = player.GetPlayerPosition();
+       // Debug.Log($"{PlayerPosition}");
+        Vector3 MousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //Debug.Log($"{MousePosition}");
+        dropItem.DumpItem(PlayerPosition, MousePosition);
+        inventoryUI.DropedSelectedItem(amount, dropItemIndex);
     }
 
     private void UpdateInventoryUI(Dictionary<int, InventoryItem> inventoryState)
@@ -102,7 +139,9 @@ public class InventoryController : MonoBehaviour
                 }
             }
             else
+            {
                 inventoryUI.Hide();
+            }
         }
     }
 }
