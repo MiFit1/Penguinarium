@@ -14,6 +14,7 @@ public class Item : MonoBehaviour
     [SerializeField] private float duration = 0.3f;
     [SerializeField] private float journeyTime = 0.2f;
     [SerializeField] private float range = 1.02f;
+    private bool stopAnimate = false;
 
     private void Start()
     {
@@ -26,10 +27,17 @@ public class Item : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
         StartCoroutine(AnimateItemPickup());
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        GameObject obj = collision.gameObject;
+        if (obj.layer != 6)
+            stopAnimate = true;
+    }   
 
     public void DumpItem(Vector3 position, Vector3 mousePosition )
     {
-        GetComponent<Collider2D>().enabled = false;
+        gameObject.layer = 7;
+        //GetComponent<Collider2D>().isTrigger = false;
         transform.position = position;
         StartCoroutine(AnimateItemDump(position, mousePosition));
     }
@@ -37,20 +45,24 @@ public class Item : MonoBehaviour
     {
         mousePosition.z = 0;
         Vector3 direction = mousePosition - position;
-        Debug.Log($"position = {mousePosition}");
+        //Debug.Log($"position = {mousePosition}");
         direction = direction.normalized;
-        Debug.Log($"directrion = {direction}");
+        //Debug.Log($"directrion = {direction}");
         direction *= range;
         Vector3 hitcurrent = position + direction;
         float startTime = Time.time;
         float fracComplete = (Time.time - startTime) / journeyTime;
         while(fracComplete <= 1)
         {
+            if (stopAnimate)
+                break;
             fracComplete = (Time.time - startTime) / journeyTime;
             transform.position = Vector3.Lerp(position, hitcurrent, fracComplete);
             yield return null;
         }
-        GetComponent<Collider2D>().enabled = true;
+        
+        gameObject.layer = 6;
+        //GetComponent<Collider2D>().isTrigger = true;
     }
     
     private IEnumerator AnimateItemPickup()

@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public static Action<int> ClickOnNumber;
     public static Action OnScrolledRight, OnScrolledLeft;
     public static Action<int> OnDropedItem;
+    public static Action OnInteraction;
 
     private PlayerInput input;
 
@@ -29,7 +30,14 @@ public class PlayerController : MonoBehaviour
         input.Player.ClickOnSeven.performed += context => OnClickedSeven();
         input.Player.Q.performed += context => OnQClicked();
         input.Player.QShift.performed += context => OnQShiftClicked();
+        input.Player.E.performed += context => OnEClicked();
     }
+
+    private void OnEClicked()
+    {
+        OnInteraction?.Invoke();
+    }
+
     public Vector3 GetPlayerPosition()
     {
         return transform.position;

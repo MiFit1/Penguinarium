@@ -116,6 +116,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""E"",
+                    ""type"": ""Button"",
+                    ""id"": ""048ae4eb-a1e4-4fec-8842-5268d9081b19"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -250,6 +259,17 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""Q"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""19e1d264-c9ff-4fcf-a557-778301d93c6a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""E"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -268,6 +288,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_ClickOnSeven = m_Player.FindAction("ClickOnSeven", throwIfNotFound: true);
         m_Player_QShift = m_Player.FindAction("Q + Shift", throwIfNotFound: true);
         m_Player_Q = m_Player.FindAction("Q", throwIfNotFound: true);
+        m_Player_E = m_Player.FindAction("E", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -337,6 +358,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ClickOnSeven;
     private readonly InputAction m_Player_QShift;
     private readonly InputAction m_Player_Q;
+    private readonly InputAction m_Player_E;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -351,6 +373,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @ClickOnSeven => m_Wrapper.m_Player_ClickOnSeven;
         public InputAction @QShift => m_Wrapper.m_Player_QShift;
         public InputAction @Q => m_Wrapper.m_Player_Q;
+        public InputAction @E => m_Wrapper.m_Player_E;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -390,6 +413,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Q.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQ;
                 @Q.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQ;
                 @Q.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnQ;
+                @E.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnE;
+                @E.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnE;
+                @E.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnE;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -424,6 +450,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @Q.started += instance.OnQ;
                 @Q.performed += instance.OnQ;
                 @Q.canceled += instance.OnQ;
+                @E.started += instance.OnE;
+                @E.performed += instance.OnE;
+                @E.canceled += instance.OnE;
             }
         }
     }
@@ -440,5 +469,6 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnClickOnSeven(InputAction.CallbackContext context);
         void OnQShift(InputAction.CallbackContext context);
         void OnQ(InputAction.CallbackContext context);
+        void OnE(InputAction.CallbackContext context);
     }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4465803295769613636}
   - component: {fileID: 4465803295769613643}
   - component: {fileID: 4465803295769613642}
+  - component: {fileID: -8769914502621785965}
   m_Layer: 6
   m_Name: defaultItem
   m_TagString: Untagged
@@ -74,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 10
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -133,8 +134,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f23be38078c8947967614f0a4a7458, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InventoryItem>k__BackingField: {fileID: 0}
-  <Quantity>k__BackingField: 0
+  <InventoryItem>k__BackingField: {fileID: 11400000, guid: 993583c197462ca4fac3efc40e4190ba, type: 2}
+  <Quantity>k__BackingField: 1
   duration: 0.3
   journeyTime: 0.2
   range: 1.02
+--- !u!50 &-8769914502621785965
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4465803295769613640}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 2.87
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 0

@@ -22,6 +22,7 @@ public class InventorySO : ScriptableObject
         {
             inventoryItems.Add(InventoryItem.GetEmptyItem());
         }
+
     }
 
     public int AddItem(ItemSO item, int quantity)

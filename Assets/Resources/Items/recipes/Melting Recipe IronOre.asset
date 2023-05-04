@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55cfd5f49f645514b82b3cf3f5f3b399, type: 3}
+  m_Name: Melting Recipe IronOre
+  m_EditorClassIdentifier: 
+  craftIn:
+  - {fileID: 11400000, guid: 5b5736a9b9230c8408ec91cde530e731, type: 2}
+  craftOut: {fileID: 11400000, guid: 993583c197462ca4fac3efc40e4190ba, type: 2}
