@@ -8,37 +8,34 @@ using UnityEngine.EventSystems;
 public class MeltingStation : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private PlayerController playerController;
-    [SerializeField] private float ClickDistance = 1;
-    [SerializeField] private PopupHint popupHint;
-    [SerializeField] private int quantityMeltingThings = 5;
+    [SerializeField] private PopupHint popupHint; 
     [SerializeField] private InventoryHotBar hotBar;
     [SerializeField] private InventorySO inventory;
     [SerializeField] private ItemSO LensSO;
     [SerializeField] private GameObject StationImageObj;
     [SerializeField] private Sprite spriteWithLens;
     [SerializeField] private Sprite spriteWithoutLens;
-    [SerializeField] private MeltingRecipeSO recipes;
-    [SerializeField] private float meltingTime = 10f;
+    [SerializeField] private MeltingRecipeSO recipes; //сюда добавл€ть предметы, которые можно переплавить и то, что будет на выходе
     [SerializeField] private GameObject prefabOutItem;
 
-    [SerializeField] private GameObject finishPosition;
+    [SerializeField] private GameObject finishPosition; 
     [SerializeField] private float journeyTime = 0.2f;
-    [SerializeField] private float yCorrection = -0.1f;
+    [SerializeField] private float yCorrection = -0.1f; //чтобы прит€гивать предметы чуть ниже центра, чтобы они нормально отрисовывались
+
+    [SerializeField] private LensDamageBar lensBar;
+    [SerializeField] private float lenseMeltingTime = 10f;
+
+    [SerializeField] private GameObject mendingLight;
+    [SerializeField] private ParticleSystem mendingParticles;
 
     private bool OnStationHandler = false;
     private bool interfaceIsActive = false;
     private Rigidbody2D playerRB;
-    private int CurrentQuantityMeltingThings;
     private bool lensInserted = false;
     private SpriteRenderer spriteStation;
 
     public bool itemInserted = false;
 
-    /*    private float distanceToStation(PlayerController controller)
-        {
-            Vector2 distance = controller.transform.position - transform.position;
-            return distance.magnitude;
-        }*/
     public void SendToMelting(Collider2D collision)
     {
         itemInserted = true;
@@ -51,7 +48,8 @@ public class MeltingStation : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         collision.GetComponent<CircleCollider2D>().enabled = false;
         StartCoroutine(FlightToMeltingStation(startVector, finishVector, center, collision));
     }
-
+    
+    //номер рецепта, если такой есть
     private int FindNumberRecipe(Collider2D collision)
     {
         for (int i = 0; i < recipes.Recipes.Count; i++)
@@ -63,6 +61,7 @@ public class MeltingStation : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         return -1;
     }
+    //јнимаци€ переноса предмета до места переплавки
     private IEnumerator FlightToMeltingStation(Vector3 StartVector, Vector3 FinishVector, Vector3 Center, Collider2D collision)
     {
         float startTime = Time.time;
@@ -73,61 +72,106 @@ public class MeltingStation : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             collision.gameObject.transform.position = Vector3.Slerp(StartVector, FinishVector, fracComplete) + Center;
             yield return null;
         }
-        while (lensInserted == false)
-            yield return null;
-        StartCoroutine(StartMelting(FindNumberRecipe(collision), collision)); //вызываетс€ тут, потому что код после корутины выполн€етс€ сразу, а не по еЄ завершении
-        
-    }
-    public IEnumerator StartMelting(int IndexRecipe, Collider2D collision)
-    {
-        float startTime = Time.time;
-        while ((Time.time - startTime) <= meltingTime)
-            yield return null;
-        Destroy(collision.gameObject);
-        CurrentQuantityMeltingThings--;
-        itemInserted = false;
-        if (CurrentQuantityMeltingThings <= 0)
+
+
+        while (true)
         {
-            lensInserted = false;
-            spriteStation.sprite = spriteWithoutLens;//анимацию ломани€ линзы сюда
-        }
-        GameObject outItem = prefabOutItem;
-        outItem.GetComponent<Item>().InventoryItem = recipes.Recipes[IndexRecipe].CraftOut();
-        outItem.GetComponent<Item>().Quantity = 1;
-        GameObject meltedItem= Instantiate(outItem);
-        meltedItem.transform.position = finishPosition.transform.position;
-        meltedItem.GetComponent<Rigidbody2D>().velocity = new Vector2(5, -1);
+            if(lensInserted == true)
+            {
+                //¬ключение / отключение частиц
+                StartCoroutine(Particles());
 
+                yield return new WaitForSeconds(collision.GetComponent<Item>().InventoryItem.MeltingTime);
+
+                //если не хватило времени на переплавку, то запустит while сначала в следующем кадре
+                if (lensInserted == false)
+                {
+                    yield return null;
+                    continue;
+                }
+                  
+                Destroy(collision.gameObject);
+                itemInserted = false;
+
+                //создание нового предмета;
+                GameObject outItem = prefabOutItem;
+                int IndexRecipe = FindNumberRecipe(collision);
+                outItem.GetComponent<Item>().InventoryItem = recipes.Recipes[IndexRecipe].CraftOut();
+                outItem.GetComponent<Item>().Quantity = 1;
+                GameObject meltedItem = Instantiate(outItem);
+                meltedItem.transform.position = finishPosition.transform.position;
+                
+                Vector2 flightDirection = playerController.transform.position - meltedItem.transform.position;
+                flightDirection.Normalize();
+
+                meltedItem.GetComponent<Rigidbody2D>().velocity = flightDirection * 6f;
+
+
+                break;
+            }
+            yield return null;
+        }
     }
 
-    private IEnumerator Timer(float time)
+    private IEnumerator Particles()
     {
-        yield return new WaitForSeconds(time);
+        while (itemInserted)
+        {
+            if (lensInserted && mendingParticles.isStopped)
+                mendingParticles.Play();
+            if (!lensInserted && mendingParticles.isPlaying)
+                mendingParticles.Stop();
+            yield return null;
+        }
+        mendingParticles.Stop();
     }
     private void Start()
     {
         playerRB = playerController.GetComponent<Rigidbody2D>();
         PlayerController.OnInteraction += OnInteractionButton;
-        CurrentQuantityMeltingThings = quantityMeltingThings;
         spriteStation = StationImageObj.GetComponent<SpriteRenderer>();
         spriteStation.sprite = spriteWithoutLens;
+        mendingLight.SetActive(false);
+        mendingParticles.Stop();
     }
-
+    //срабатывает при нажатии на кнопку E
     private void OnInteractionButton()
     {
        if((interfaceIsActive)&&(!lensInserted))
         {
             int itemIndex = hotBar.GetHotBarSelectedSlot();
             InventoryItem item = inventory.GetItemAt(itemIndex);
-            if (LensSO.Name != item.item.Name)
+            if (LensSO.Name != item.item.Name) 
                 return;
             inventory.RemoveAllItems(itemIndex);
             lensInserted = true;
-            CurrentQuantityMeltingThings = quantityMeltingThings;
+            lensBar.Show();
+            mendingLight.SetActive(true);
+            StartCoroutine(AnimationBar(lenseMeltingTime));
             spriteStation.sprite = spriteWithLens;
-
         }
     }
+    
+    //анимаци€ убывани€ бара
+    public IEnumerator AnimationBar(float animationTime)
+    {
+        float startTime = Time.time;
+        float fracComplete = 0f;
+        float reverseFracComplete = 1f;
+        while ((Time.time - startTime) <= animationTime)
+        {
+            fracComplete = (Time.time - startTime) / animationTime;
+            reverseFracComplete = 1f - fracComplete;
+            lensBar.SetFillLevel(reverseFracComplete);
+            yield return null;
+        }
+        spriteStation.sprite = spriteWithoutLens;
+        lensInserted = false;
+        lensBar.Hide();
+        mendingLight.SetActive(false);
+        //анимацию ломани€ линзы сюда
+    }
+
 
     public void ActivateInterface()
     {

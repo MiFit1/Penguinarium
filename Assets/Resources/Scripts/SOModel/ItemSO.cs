@@ -9,6 +9,7 @@ public class ItemSO : ScriptableObject
 
     public int ID => GetInstanceID();
 
+    [field:SerializeField] public float MeltingTime = 4f;
     [field: SerializeField] public int MazStackSize { get; set; } = 1;
 
     [field: SerializeField] public string Name { get; set; }

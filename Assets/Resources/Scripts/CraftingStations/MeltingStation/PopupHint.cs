@@ -11,10 +11,12 @@ public class PopupHint : MonoBehaviour
     [SerializeField] private float journeyTime;
     private SpriteRenderer sprite;
     private bool stopAnimate = false;
+    private Vector2 startingPosition;
 
     private void Start()
     {
         sprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        startingPosition = transform.localPosition;
         Hide();
     }
     public void StopAnimation()
@@ -37,7 +39,7 @@ public class PopupHint : MonoBehaviour
     }
     private IEnumerator AnimateAppearance()
     {
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = startingPosition;
         float startTime = Time.time;
         float fracComplete = (Time.time - startTime) / journeyTime;
         Vector3 startPosition = transform.position;

@@ -28,8 +28,11 @@ public class MagneticZone : MonoBehaviour
                 //Debug.Log("Рецепта нет");
                 return;
             }
-
-            station.SendToMelting(collision);
+            //на всякий случай
+            if(collision.GetComponent<Item>()) 
+            {
+                station.SendToMelting(collision);
+            }
         }
     }
 }

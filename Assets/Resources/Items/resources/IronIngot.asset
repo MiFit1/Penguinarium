@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: IronIngot
   m_EditorClassIdentifier: 
   <IsStackable>k__BackingField: 1
+  MeltingTime: 4
   <MazStackSize>k__BackingField: 10
   <Name>k__BackingField: "\u0416\u0435\u043B\u0435\u0437\u043E"
   <Description>k__BackingField: 

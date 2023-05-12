@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
+/*using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class UICraftPage : MonoBehaviour
 {
@@ -56,3 +54,4 @@ public class UICraftPage : MonoBehaviour
         throw new NotImplementedException();
     }
 }
+*/
