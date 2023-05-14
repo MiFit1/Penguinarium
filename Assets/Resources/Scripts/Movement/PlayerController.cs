@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-
+    private miningСontroller mineController;
     private Rigidbody2D rb;
     private Animator anim;
     private float horizontal;
@@ -15,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public static Action OnScrolledRight, OnScrolledLeft;
     public static Action<int> OnDropedItem;
     public static Action OnInteraction;
+    public static Action OnLeftCliked, OnLeftClikedUp;
 
     private PlayerInput input;
 
@@ -31,6 +33,19 @@ public class PlayerController : MonoBehaviour
         input.Player.Q.performed += context => OnQClicked();
         input.Player.QShift.performed += context => OnQShiftClicked();
         input.Player.E.performed += context => OnEClicked();
+        input.Player.MouseLeftClick.performed += context => OnLeftMouseCliked();
+        input.Player.MouseLeftClick.canceled += context => OnLeftMouseClikedUp();
+    }
+
+    private void OnLeftMouseClikedUp()
+    {
+        OnLeftClikedUp?.Invoke();
+    }
+
+    private void OnLeftMouseCliked()
+    {
+        //Debug.Log(input.Player.MouseLeftClick.type);
+        OnLeftCliked?.Invoke();
     }
 
     private void OnEClicked()
@@ -105,7 +120,9 @@ public class PlayerController : MonoBehaviour
         anim = this.GetComponent<Animator>();
         rb = this.GetComponent<Rigidbody2D>();
         hand = this.transform.GetChild(0).GetChild(0).gameObject;
+        mineController = this.GetComponent<miningСontroller>();
     }
+    
 
     void Update()
     {
@@ -140,6 +157,7 @@ public class PlayerController : MonoBehaviour
         {
             OnScrolledLeft?.Invoke();
         }
+
     }
 
 
@@ -147,42 +165,45 @@ public class PlayerController : MonoBehaviour
     {
         rb.velocity = new Vector2(horizontal * movingSpeed, vertical * movingSpeed);
 
-        {
             diffHand = Camera.main.ScreenToWorldPoint(Input.mousePosition) - hand.transform.position;
             diffHand.Normalize();
-            rotZHand = Mathf.Atan2(diffHand.y, diffHand.x) * Mathf.Rad2Deg;
+            rotZHand = Mathf.Atan2(diffHand.y, diffHand.x) * Mathf.Rad2Deg; //угол м/у осью OX и мышкой
 
             if (Camera.main.ScreenToWorldPoint(Input.mousePosition).x > transform.position.x)
             {
-                if (rotZHand < -40)
-                {
-                    rotZHand = -40;
-                }
-                else if (rotZHand > 40)
-                {
-                    rotZHand = 40;
-                }
+                if (!mineController.GetHitProcess()) //отключает поворот рукой в момент анимации удара
+            {
+                    if (rotZHand < -40)
+                    {
+                        rotZHand = -40;
+                    }
+                    else if (rotZHand > 40)
+                    {
+                        rotZHand = 40;
+                    }
 
-                hand.transform.localRotation = Quaternion.Euler(0f, 0f, rotZHand);
-
+                    hand.transform.localRotation = Quaternion.Euler(0f, 0f, rotZHand);
+                }
                 transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, 0, transform.rotation.eulerAngles.z);
             }
             else
             {
-                if (rotZHand > -140 && rotZHand < 0)
-                {
-                    rotZHand = -140;
-                }
-                else if (rotZHand < 140 && rotZHand > 0)
-                {
-                    rotZHand = 140;
-                }
+                if (!mineController.GetHitProcess()) //отключает поворот рукой в момент анимации удара
+            {
+                    if (rotZHand > -140 && rotZHand < 0)
+                    {
+                        rotZHand = -140;
+                    }
+                    else if (rotZHand < 140 && rotZHand > 0)
+                    {
+                        rotZHand = 140;
+                    }
 
-                hand.transform.localRotation = Quaternion.Euler(180f, 180f, -rotZHand);
-
+                    hand.transform.localRotation = Quaternion.Euler(180f, 180f, -rotZHand);
+                }
                 transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, 180, transform.rotation.eulerAngles.z);
             }
 
-        } //вращение рукой
+         //вращение рукой
     }
 }

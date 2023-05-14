@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4465803295769613636
 SpriteRenderer:
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f23be38078c8947967614f0a4a7458, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InventoryItem>k__BackingField: {fileID: 11400000, guid: 7535409950622684896981ebd237b241, type: 2}
+  <InventoryItem>k__BackingField: {fileID: 11400000, guid: 993583c197462ca4fac3efc40e4190ba, type: 2}
   <Quantity>k__BackingField: 1
   duration: 0.3
   journeyTime: 0.2

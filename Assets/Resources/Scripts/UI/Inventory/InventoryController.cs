@@ -67,8 +67,8 @@ public class InventoryController : MonoBehaviour
        // Debug.Log($"{PlayerPosition}");
         Vector3 MousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //Debug.Log($"{MousePosition}");
-        dropItem.DumpItem(PlayerPosition, MousePosition);
         inventoryUI.DropedSelectedItem(amount, dropItemIndex);
+        dropItem.DumpItem(PlayerPosition, MousePosition);
     }
 
     private void UpdateInventoryUI(Dictionary<int, InventoryItem> inventoryState)

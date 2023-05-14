@@ -16,6 +16,8 @@ public class Item : MonoBehaviour
     [SerializeField] private float range = 1.02f;
     private bool stopAnimate = false;
 
+    public bool animationIsStarted = false;
+
     private void Start()
     {
         GetComponent<SpriteRenderer>().sprite = InventoryItem.ItemImage;
@@ -24,20 +26,25 @@ public class Item : MonoBehaviour
 
     internal void DestroyItem()
     {
-        GetComponent<Collider2D>().enabled = false;
         StartCoroutine(AnimateItemPickup());
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        stopAnimate = true;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        GameObject obj = collision.gameObject;
+/*        GameObject obj = collision.gameObject;
+        Physics2D.IgnoreLayerCollision(7, 11);
         if (obj.layer != 6)
-            stopAnimate = true;
+            stopAnimate = true;*/
     }   
 
     public void DumpItem(Vector3 position, Vector3 mousePosition )
     {
         gameObject.layer = 7;
-        //GetComponent<Collider2D>().isTrigger = false;
+        GetComponent<Collider2D>().isTrigger = false;
         transform.position = position;
         StartCoroutine(AnimateItemDump(position, mousePosition));
     }
@@ -62,7 +69,9 @@ public class Item : MonoBehaviour
         }
         
         gameObject.layer = 6;
-        //GetComponent<Collider2D>().isTrigger = true;
+
+       // Debug.Log(Quantity);
+        GetComponent<Collider2D>().isTrigger = true;
     }
     
     private IEnumerator AnimateItemPickup()

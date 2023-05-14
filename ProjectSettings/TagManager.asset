@@ -14,9 +14,9 @@ TagManager:
   - Items
   - ' DropItems'
   - Player
-  - Stations
+  - Environment
   - StationTrigger
-  - 
+  - PlayerTriggers
   - 
   - 
   - 

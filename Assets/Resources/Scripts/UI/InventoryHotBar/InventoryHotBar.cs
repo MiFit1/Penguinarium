@@ -74,7 +74,7 @@ public class InventoryHotBar : MonoBehaviour
             uiItem.transform.localScale = Vector3.one;
             listHotBarItems.Add(uiItem);
         }
-        Debug.Log($"HotBarlist = {listHotBarItems.Count}");
+       // Debug.Log($"HotBarlist = {listHotBarItems.Count}");
     }
     public void UpdateHotBar(int hotBarSize)
     {

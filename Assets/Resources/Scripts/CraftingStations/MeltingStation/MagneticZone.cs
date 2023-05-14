@@ -29,9 +29,15 @@ public class MagneticZone : MonoBehaviour
                 return;
             }
             //на всякий случай
-            if(collision.GetComponent<Item>()) 
+            if (collision.GetComponent<Item>()) 
             {
-                station.SendToMelting(collision);
+                Item item = collision.GetComponent<Item>();
+                //чтобы не было бага, когда предмет тянется в две станции и обе переплавляют
+                if (!item.animationIsStarted) 
+                {
+                    item.animationIsStarted = true;
+                    station.SendToMelting(collision);
+                }
             }
         }
     }

@@ -73,7 +73,8 @@ public class MeltingStation : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             yield return null;
         }
 
-
+        collision.GetComponent<Item>().animationIsStarted = false;
+        
         while (true)
         {
             if(lensInserted == true)
@@ -143,7 +144,7 @@ public class MeltingStation : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             InventoryItem item = inventory.GetItemAt(itemIndex);
             if (LensSO.Name != item.item.Name) 
                 return;
-            inventory.RemoveAllItems(itemIndex);
+            inventory.RemoveItem(itemIndex, 1);
             lensInserted = true;
             lensBar.Show();
             mendingLight.SetActive(true);
